@@ -1,0 +1,19 @@
+﻿@code {
+    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Parameter]
+    public TodoItem Todo { get; set; }
+    void EditTodo()
+    {
+        var id = Todo.Id;
+
+        NavigationManager.NavigateTo("/todoedit/" + id);
+    }
+}
+
+<div class="todo-item">
+    <h3>@Todo.Description</h3>
+    <p>Due: @Todo.DueDate?.ToString("MMM dd, yyyy")</p>
+    <p>Status: @(Todo.IsCompleted ? "Completed" : "Pending")</p>
+    <button @onclick="EditTodo" class="btn-btn-primary">Edit Todo</button>
+
+</div>

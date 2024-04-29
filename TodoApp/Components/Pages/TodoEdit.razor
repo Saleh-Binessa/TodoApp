@@ -1,0 +1,52 @@
+﻿@page "/todoedit/{todoId:int}"
+<EditForm Model="@editTodo" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="Description" class="form-label">Description:</label>
+        <InputText id="Description" class="form-control" @bind-Value="@editTodo.Description" />
+    </div>
+
+    <div class="mb-3">
+        <label for="IsCompleted" class="form-label">Is Completed:</label>
+        <InputCheckbox id="IsCompleted" class="form-check-input" @bind-Value="@editTodo.IsCompleted" />
+    </div>
+
+    <div class="mb-3">
+        <label for="DueDate" class="form-label">Due Date:</label>
+        <InputDate id="DueDate" class="form-control" @bind-Value="@editTodo.DueDate" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save changes</button>
+</EditForm>
+
+@code {
+    private TodoItem editTodo = new TodoItem();
+    [Parameter] public int todoId { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public IDbContextFactory<TodoContext> DbContextFactory { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (var context = DbContextFactory.CreateDbContext())
+        {
+            editTodo = await context.Items.FindAsync(todoId);
+            if (editTodo == null)
+            {
+                NavigationManager.NavigateTo("/todolist");
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        using (var context = DbContextFactory.CreateDbContext())
+        {
+            context.Items.Update(editTodo);
+            await context.SaveChangesAsync();
+        }
+
+        NavigationManager.NavigateTo("/");
+    }
+}

@@ -1,0 +1,15 @@
+﻿@page "/"
+
+<h1>Todo List</h1>
+
+@code {
+    public TodoItem testTodo = new TodoItem
+        {
+            Id = 1,
+            Description = "Finish the Blazor project",
+            IsCompleted = false,
+            DueDate = DateTime.Now.AddDays(1)
+        };
+}
+
+<TodoItemComponent Todo="testTodo" />
